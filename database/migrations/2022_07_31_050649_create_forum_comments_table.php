@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->text('body');
             $table->string('category');
+            $table->unsignedBigInteger('forum_id');
             $table->unsignedBigInteger('user_id');
             $table->timestamps();
 
