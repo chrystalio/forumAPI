@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+
+use App\Models\Forum;
+use App\Models\ForumComments;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -18,7 +21,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'username',
         'email',
         'password',
     ];
@@ -41,4 +44,12 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function forums(){
+        return $this->hasMany(Forum::class);
+    }
+
+     public function forumsComments(){
+        return $this->hasMany(ForumComments::class);
+    }
 }
