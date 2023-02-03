@@ -70,6 +70,14 @@ class ForumController extends Controller
         }
 
         $user = $this->getAuthUser();
+        $forum = Forum::findOrFail($id);
+
+        if ($user->id !== $forum->user_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You are not authorized to update this post'
+            ], 404);
+        }
 
         Forum::findOrFail($id)->update([
             'title' => request('title'),
