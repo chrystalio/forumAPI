@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Forum;
-use App\Models\User;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Support\Facades\Auth;
 
 
 class ForumController extends Controller
@@ -14,7 +16,7 @@ class ForumController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
 
     public function __construct()
@@ -27,21 +29,10 @@ class ForumController extends Controller
         return Forum::with('user:id,username')->get();
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\JsonResponse
-     */
-    public function store(Request $request)
+
+    public function store(Request $request): \Illuminate\Http\JsonResponse
     {
-        //set validation
-        $validator = Validator::make($request->all(), [
-            'title' => 'required|string|min:5|max:255',
-            'body' => 'required|min:10|max:255',
-            'category' => 'required',
-            'slug' => 'unique:forums'
-        ]);
+        $validator = Validator::make($request->all(), $this->getValidationAttribute());
 
         //if validation fails
         if ($validator->fails()) {
@@ -49,14 +40,7 @@ class ForumController extends Controller
         }
 
         //get user
-        try {
-            $user = auth()->user();
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Not authorized, You must login first'
-            ], 404);
-        }
+        $user = $this->getAuthUser();
 
         $user->forums()->create([
             'title' => request('title'),
@@ -72,37 +56,58 @@ class ForumController extends Controller
         ], 201);
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function show($id)
     {
         return Forum::with('user:id,username')->findOrFail($id);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), $this->getValidationAttribute());
+        //if validation fails
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
+        $user = $this->getAuthUser();
+
+        Forum::findOrFail($id)->update([
+            'title' => request('title'),
+            'body' => request('body'),
+            'category' => request('category'),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Successfully updated'
+        ], 201);
+
+    }
+
+    public function destroy($id)
     {
         //
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy($id)
+    private function getValidationAttribute(): array
     {
-        //
+        return [
+            'title' => 'required|string|min:5|max:255',
+            'body' => 'required|min:10|max:255',
+            'category' => 'required|sometimes',
+            'slug' => 'unique:forums'
+        ];
+    }
+
+    private function getAuthUser()
+    {
+        try {
+            return auth()->user();
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Not authorized, You must login first'
+            ], 404);
+        }
     }
 }
