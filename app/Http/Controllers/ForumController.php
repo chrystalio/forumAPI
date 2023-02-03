@@ -39,7 +39,8 @@ class ForumController extends Controller
         $validator = Validator::make($request->all(), [
             'title' => 'required|string|min:5|max:255',
             'body' => 'required|min:10|max:255',
-            'category' => 'required'
+            'category' => 'required',
+            'slug' => 'unique:forums'
         ]);
 
         //if validation fails
@@ -60,7 +61,7 @@ class ForumController extends Controller
         $user->forums()->create([
             'title' => request('title'),
             'body' => request('body'),
-            'slug' => \Str::slug(request('title'), '-'),
+            'slug' => \Str::slug(request('title'), '-') . '-' . \Str::random(5),
             'category' => request('category'),
         ]);
 
