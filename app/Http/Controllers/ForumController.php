@@ -34,12 +34,7 @@ class ForumController extends Controller
 
     public function store(Request $request): \Illuminate\Http\JsonResponse
     {
-        $validator = Validator::make($request->all(), $this->getValidationAttribute());
-
-        //if validation fails
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
+        $this->validateRequest();
         $user = $this->getAuthUser();
 
         $user->forums()->create([
@@ -63,12 +58,7 @@ class ForumController extends Controller
 
     public function update(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), $this->getValidationAttribute());
-        //if validation fails
-        if ($validator->fails()) {
-            return response()->json($validator->errors(), 422);
-        }
-
+        $this->validateRequest();
         $user = $this->getAuthUser();
 
         try {
@@ -139,13 +129,20 @@ class ForumController extends Controller
         }
     }
 
-    private function getValidationAttribute(): array
+    private function validateRequest(): \Illuminate\Http\JsonResponse
     {
-        return [
+        $validator = Validator::make(request()->all(), [
             'title' => 'required|string|min:5|max:255',
             'body' => 'required|min:10|max:255',
             'category' => 'required|sometimes',
             'slug' => 'unique:forums'
-        ];
+        ]);
+
+        if ($validator->fails()) {
+            response()->json($validator->errors(), 422)->send();
+            exit;
+        }
+
+        return $validator;
     }
 }
