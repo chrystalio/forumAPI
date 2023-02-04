@@ -6,6 +6,7 @@ use App\Models\Forum;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
@@ -39,16 +40,7 @@ class ForumController extends Controller
         if ($validator->fails()) {
             return response()->json($validator->errors(), 422);
         }
-
-        //get user
-        try {
-            $user = auth()->user();
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Not authorized, You must login first'
-            ], 404);
-        }
+        $user = $this->getAuthUser();
 
         $user->forums()->create([
             'title' => request('title'),
@@ -77,16 +69,8 @@ class ForumController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        try {
-            $user = auth()->user();
-        } catch (UserNotDefinedException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Not authorized, You must login first'
-            ], 403);
-        }
-
         $forum = Forum::findOrFail($id);
+        $user = $this->getAuthUser();
 
         if ($user->id !== $forum->user_id) {
             return response()->json([
@@ -110,15 +94,15 @@ class ForumController extends Controller
 
     public function destroy($id)
     {
-        $forum = Forum::findOrFail($id);
+        $user = $this->getAuthUser();
 
         try {
-            $user = auth()->user();
-        } catch (UserNotDefinedException $e) {
+            $forum = Forum::findOrFail($id);
+        } catch (ModelNotFoundException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Not authorized, You must login first'
-            ], 403);
+                'message' => 'Post not found'
+            ], 404);
         }
 
         if ($user->id !== $forum->user_id) {
@@ -134,6 +118,17 @@ class ForumController extends Controller
             'success' => true,
             'message' => 'Successfully deleted'
         ], 201);
+    }
+
+    private function getAuthUser(){
+        try {
+            return auth()->user();
+        } catch (UserNotDefinedException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Not authorized, You must login first'
+            ], 403);
+        }
     }
 
     private function getValidationAttribute(): array
