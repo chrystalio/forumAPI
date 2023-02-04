@@ -110,7 +110,30 @@ class ForumController extends Controller
 
     public function destroy($id)
     {
-        //
+        $forum = Forum::findOrFail($id);
+
+        try {
+            $user = auth()->user();
+        } catch (UserNotDefinedException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Not authorized, You must login first'
+            ], 403);
+        }
+
+        if ($user->id !== $forum->user_id) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You are not authorized to delete this post'
+            ], 403);
+        }
+
+        $forum->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Successfully deleted'
+        ], 201);
     }
 
     private function getValidationAttribute(): array
