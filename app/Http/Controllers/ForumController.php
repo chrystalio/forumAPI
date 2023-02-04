@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
+use PHPOpenSourceSaver\JWTAuth\Exceptions\UserNotDefinedException;
 
 
 class ForumController extends Controller
@@ -40,7 +41,14 @@ class ForumController extends Controller
         }
 
         //get user
-        $user = $this->getAuthUser();
+        try {
+            $user = auth()->user();
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Not authorized, You must login first'
+            ], 404);
+        }
 
         $user->forums()->create([
             'title' => request('title'),
@@ -69,14 +77,22 @@ class ForumController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        $user = $this->getAuthUser();
+        try {
+            $user = auth()->user();
+        } catch (UserNotDefinedException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Not authorized, You must login first'
+            ], 403);
+        }
+
         $forum = Forum::findOrFail($id);
 
         if ($user->id !== $forum->user_id) {
             return response()->json([
                 'success' => false,
                 'message' => 'You are not authorized to update this post'
-            ], 404);
+            ], 403);
         }
 
         Forum::findOrFail($id)->update([
@@ -105,17 +121,5 @@ class ForumController extends Controller
             'category' => 'required|sometimes',
             'slug' => 'unique:forums'
         ];
-    }
-
-    private function getAuthUser()
-    {
-        try {
-            return auth()->user();
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Not authorized, You must login first'
-            ], 404);
-        }
     }
 }
