@@ -129,7 +129,7 @@ class ForumController extends Controller
         }
     }
 
-    private function validateRequest(): \Illuminate\Http\JsonResponse
+    private function validateRequest()
     {
         $validator = Validator::make(request()->all(), [
             'title' => 'required|string|min:5|max:255',
@@ -142,7 +142,5 @@ class ForumController extends Controller
             response()->json($validator->errors(), 422)->send();
             exit;
         }
-
-        return $validator;
     }
 }
