@@ -69,8 +69,16 @@ class ForumController extends Controller
             return response()->json($validator->errors(), 422);
         }
 
-        $forum = Forum::findOrFail($id);
         $user = $this->getAuthUser();
+
+        try {
+            $forum = Forum::findOrFail($id);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Post not found'
+            ], 404);
+        }
 
         if ($user->id !== $forum->user_id) {
             return response()->json([
@@ -79,7 +87,7 @@ class ForumController extends Controller
             ], 403);
         }
 
-        Forum::findOrFail($id)->update([
+        $forum->update([
             'title' => request('title'),
             'body' => request('body'),
             'category' => request('category'),
