@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ForumCommentController;
 use App\Http\Controllers\ForumController;
 use App\Http\Controllers\RegisterController;
 use Illuminate\Http\Request;
@@ -32,5 +33,6 @@ Route::group(['middleware' => 'api'], function ($router){
     });
 
     Route::apiResource('forums', ForumController::class);
+    Route::apiResource('forums.comments', ForumCommentController::class);
 
 });
