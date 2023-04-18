@@ -16,7 +16,6 @@ return new class extends Migration
         Schema::create('forum_comments', function (Blueprint $table) {
             $table->id();
             $table->text('body');
-            $table->string('category');
             $table->unsignedBigInteger('forum_id');
             $table->unsignedBigInteger('user_id');
             $table->timestamps();
