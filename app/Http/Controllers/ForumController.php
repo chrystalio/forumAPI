@@ -3,14 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Forum;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
-use PHPOpenSourceSaver\JWTAuth\Exceptions\UserNotDefinedException;
 
 
 class ForumController extends Controller
@@ -21,6 +17,8 @@ class ForumController extends Controller
      * @return Response
      */
 
+    use AuthUserTrait;
+
     public function __construct()
     {
         $this->middleware('auth:api');
@@ -30,7 +28,6 @@ class ForumController extends Controller
     {
         return Forum::with('user:id,username')->get();
     }
-
 
     public function store(Request $request): \Illuminate\Http\JsonResponse
     {
@@ -87,7 +84,6 @@ class ForumController extends Controller
             'success' => true,
             'message' => 'Successfully updated'
         ], 201);
-
     }
 
     public function destroy($id)
@@ -116,17 +112,6 @@ class ForumController extends Controller
             'success' => true,
             'message' => 'Successfully deleted'
         ], 201);
-    }
-
-    private function getAuthUser(){
-        try {
-            return auth()->user();
-        } catch (UserNotDefinedException $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Not authorized, You must login first'
-            ], 403);
-        }
     }
 
     private function validateRequest()
