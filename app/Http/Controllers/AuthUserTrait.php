@@ -1,8 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use PHPOpenSourceSaver\JWTAuth\Exceptions\UserNotDefinedException;
 use Tymon\JWTAuth\Exceptions\UserNotDefinedException;
 
 trait AuthUserTrait
