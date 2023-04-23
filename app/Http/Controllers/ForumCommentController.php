@@ -75,7 +75,7 @@ class ForumCommentController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Successfully updated'
+            'message' => 'Comment Successfully updated'
         ], 201);
     }
 
