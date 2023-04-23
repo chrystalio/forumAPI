@@ -83,11 +83,33 @@ class ForumCommentController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  int  $id
-     * @return Response
+     * @return JsonResponse
      */
-    public function destroy($id)
+    public function destroy($forumId, $commentId)
     {
-        //
+        try {
+            $forumComment = ForumComment::findOrFail($commentId);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Post not found'
+            ], 404);
+        }
+
+        try {
+            $this->checkOwnership($forumComment->user_id);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You are not authorized to delete this comment'
+            ], 403);
+        }
+        $forumComment->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Successfully deleted'
+        ], 201);
     }
 
     private function validateRequest(): void
