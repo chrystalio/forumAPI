@@ -69,6 +69,6 @@ class User extends Authenticatable implements JWTSubject
     }
 
      public function forumsComments(){
-        return $this->hasMany(ForumComments::class);
+        return $this->hasMany(ForumComment::class);
     }
 }

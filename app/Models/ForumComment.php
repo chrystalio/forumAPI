@@ -8,7 +8,7 @@ use App\Models\User;
 use App\Models\Forum;
 
 
-class ForumComments extends Model
+class ForumComment extends Model
 {
     use HasFactory;
 
