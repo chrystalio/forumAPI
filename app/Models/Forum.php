@@ -4,8 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
-use App\Models\ForumComments;
 
 class Forum extends Model
 {
@@ -20,6 +18,6 @@ class Forum extends Model
 
     public function comments()
     {
-        return $this->hasMany(ForumComments::class);
+        return $this->hasMany(ForumComment::class);
     }
 }
