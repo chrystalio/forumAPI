@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ForumComment;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -40,26 +42,41 @@ class ForumCommentController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param Request $request
      * @param  int  $id
-     * @return Response
+     * @return JsonResponse
      */
-    public function update(Request $request, $id)
+    public function update(Request $request, $forumId, $commentId)
     {
-        //
+        $this->validateRequest();
+        try {
+            $forumComment = ForumComment::findOrFail($commentId);
+        } catch (ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Forum not found'
+            ], 404);
+        }
+
+        try {
+            $this->checkOwnership($forumComment->user_id);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => $e->getMessage()
+            ], 403);
+        }
+
+        $forumComment->update([
+            'body' => request('body'),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Successfully updated'
+        ], 201);
     }
 
     /**
