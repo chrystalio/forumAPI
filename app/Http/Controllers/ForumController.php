@@ -56,21 +56,21 @@ class ForumController extends Controller
     public function update(Request $request, $id)
     {
         $this->validateRequest();
-        $user = $this->getAuthUser();
-
         try {
             $forum = Forum::findOrFail($id);
         } catch (ModelNotFoundException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Post not found'
+                'message' => 'Forum not found'
             ], 404);
         }
 
-        if ($user->id !== $forum->user_id) {
+        try {
+            $this->checkOwnership($forum->user_id);
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'You are not authorized to update this post'
+                'message' => $e->getMessage()
             ], 403);
         }
 
@@ -86,10 +86,11 @@ class ForumController extends Controller
         ], 201);
     }
 
-    public function destroy($id)
+    /**
+     * @throws \Exception
+     */
+    public function destroy($id): \Illuminate\Http\JsonResponse
     {
-        $user = $this->getAuthUser();
-
         try {
             $forum = Forum::findOrFail($id);
         } catch (ModelNotFoundException $e) {
@@ -99,13 +100,14 @@ class ForumController extends Controller
             ], 404);
         }
 
-        if ($user->id !== $forum->user_id) {
+        try {
+            $this->checkOwnership($forum->user_id);
+        } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
                 'message' => 'You are not authorized to delete this post'
             ], 403);
         }
-
         $forum->delete();
 
         return response()->json([
