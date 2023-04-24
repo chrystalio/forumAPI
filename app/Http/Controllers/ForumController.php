@@ -22,7 +22,7 @@ class ForumController extends Controller
 
     public function __construct()
     {
-        $this->middleware('jwt.verify', ['except' => ['index', 'show']]);
+        $this->middleware('jwt.verify', ['except' => ['index', 'show', 'filterTag']]);
     }
 
     public function index()
@@ -53,6 +53,13 @@ class ForumController extends Controller
     {
         return new ForumResource(Forum::with('user', 'comments.user')->findOrFail($id));
     }
+
+    public function filterTag($tag): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
+    {
+        $forum = Forum::with('user')->where('category', $tag)->paginate(10);
+        return ForumResource::collection($forum);
+    }
+
 
     public function update(Request $request, $id)
     {
