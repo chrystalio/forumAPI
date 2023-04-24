@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ForumResource;
 use App\Models\Forum;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\Request;
@@ -21,12 +22,12 @@ class ForumController extends Controller
 
     public function __construct()
     {
-        $this->middleware('jwt.verify');
+        $this->middleware('jwt.verify', ['except' => ['index', 'show']]);
     }
 
     public function index()
     {
-        return Forum::with('user:id,username')->paginate(10);
+        return Forum::with('user')->paginate(10);
     }
 
     public function store(Request $request): \Illuminate\Http\JsonResponse
@@ -50,7 +51,7 @@ class ForumController extends Controller
 
     public function show($id)
     {
-        return Forum::with('user:id,username', 'comments.user:id,username')->findOrFail($id);
+        return new ForumResource(Forum::with('user', 'comments.user')->findOrFail($id));
     }
 
     public function update(Request $request, $id)
