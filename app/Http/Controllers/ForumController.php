@@ -26,7 +26,7 @@ class ForumController extends Controller
 
     public function index()
     {
-        return Forum::with('user:id,username')->get();
+        return Forum::with('user:id,username')->paginate(10);
     }
 
     public function store(Request $request): \Illuminate\Http\JsonResponse
