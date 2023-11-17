@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -64,11 +63,13 @@ class User extends Authenticatable implements JWTSubject
         return [];
     }
 
-    public function forums(){
+    public function forums()
+    {
         return $this->hasMany(Forum::class);
     }
 
-     public function forumsComments(){
+    public function forumsComments()
+    {
         return $this->hasMany(ForumComment::class);
     }
 }

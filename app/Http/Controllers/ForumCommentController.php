@@ -20,9 +20,6 @@ class ForumCommentController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param Request $request
-     * @return JsonResponse
      */
     public function store(Request $request, $forumId): JsonResponse
     {
@@ -37,14 +34,13 @@ class ForumCommentController extends Controller
         //return response JSON if success posted
         return response()->json([
             'success' => true,
-            'message' => 'Comment Successfully Added'
+            'message' => 'Comment Successfully Added',
         ], 201);
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
      * @param  int  $id
      * @return JsonResponse
      */
@@ -56,7 +52,7 @@ class ForumCommentController extends Controller
         } catch (ModelNotFoundException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Forum not found'
+                'message' => 'Forum not found',
             ], 404);
         }
 
@@ -65,7 +61,7 @@ class ForumCommentController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 403);
         }
 
@@ -75,7 +71,7 @@ class ForumCommentController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Comment Successfully updated'
+            'message' => 'Comment Successfully updated',
         ], 201);
     }
 
@@ -92,7 +88,7 @@ class ForumCommentController extends Controller
         } catch (ModelNotFoundException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Post not found'
+                'message' => 'Post not found',
             ], 404);
         }
 
@@ -101,14 +97,14 @@ class ForumCommentController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'You are not authorized to delete this comment'
+                'message' => 'You are not authorized to delete this comment',
             ], 403);
         }
         $forumComment->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'Successfully deleted'
+            'message' => 'Successfully deleted',
         ], 201);
     }
 

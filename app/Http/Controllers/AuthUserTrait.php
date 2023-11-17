@@ -1,10 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Support\Facades\Auth;
-use Tymon\JWTAuth\Exceptions\UserNotDefinedException;
-use Illuminate\Auth\SessionGuard;
 
 trait AuthUserTrait
 {
@@ -15,11 +14,10 @@ trait AuthUserTrait
         } catch (AuthenticationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Not authorized, You must login first'
+                'message' => 'Not authorized, You must login first',
             ], 403);
         }
     }
-
 
     private function checkOwnership($owner): void
     {

@@ -15,7 +15,7 @@ class JWTMiddleware
             return response()->json(['error' => 'Invalid token / Authenticated'], 401);
         }
 
-        if (!$user) {
+        if (! $user) {
             return response()->json(['error' => 'User not found'], 404);
         }
 

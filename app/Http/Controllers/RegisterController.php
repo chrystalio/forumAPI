@@ -11,7 +11,6 @@ class RegisterController extends Controller
     /**
      * Handle the incoming request.
      *
-     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\JsonResponse|\Illuminate\Http\Response
      */
     public function __invoke(Request $request)
@@ -20,7 +19,7 @@ class RegisterController extends Controller
         $validator = Validator::make($request->all(), [
             'username' => 'required|string|max:255|unique:users',
             'email' => 'required|email|unique:users',
-            'password' => 'required|min:8|confirmed'
+            'password' => 'required|min:8|confirmed',
         ]);
 
         //if validation fails
@@ -32,7 +31,7 @@ class RegisterController extends Controller
         $user = User::create([
             'username' => request('username'),
             'email' => request('email'),
-            'password' => bcrypt(request('password'))
+            'password' => bcrypt(request('password')),
         ]);
 
         //return response JSON user is created

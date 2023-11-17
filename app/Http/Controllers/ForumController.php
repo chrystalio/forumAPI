@@ -9,7 +9,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Validator;
 
-
 class ForumController extends Controller
 {
     /**
@@ -17,7 +16,6 @@ class ForumController extends Controller
      *
      * @return Response
      */
-
     use AuthUserTrait;
 
     public function __construct()
@@ -38,14 +36,14 @@ class ForumController extends Controller
         $user->forums()->create([
             'title' => request('title'),
             'body' => request('body'),
-            'slug' => \Str::slug(request('title'), '-') . '-' . \Str::random(5),
+            'slug' => \Str::slug(request('title'), '-').'-'.\Str::random(5),
             'category' => request('category'),
         ]);
 
         //return response JSON if success posted
         return response()->json([
             'success' => true,
-            'message' => 'Successfully posted'
+            'message' => 'Successfully posted',
         ], 201);
     }
 
@@ -57,9 +55,9 @@ class ForumController extends Controller
     public function filterTag($tag): \Illuminate\Http\Resources\Json\AnonymousResourceCollection
     {
         $forum = Forum::with('user')->where('category', $tag)->paginate(10);
+
         return ForumResource::collection($forum);
     }
-
 
     public function update(Request $request, $id)
     {
@@ -69,7 +67,7 @@ class ForumController extends Controller
         } catch (ModelNotFoundException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Forum not found'
+                'message' => 'Forum not found',
             ], 404);
         }
 
@@ -78,7 +76,7 @@ class ForumController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => $e->getMessage()
+                'message' => $e->getMessage(),
             ], 403);
         }
 
@@ -90,7 +88,7 @@ class ForumController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Successfully updated'
+            'message' => 'Successfully updated',
         ], 201);
     }
 
@@ -104,7 +102,7 @@ class ForumController extends Controller
         } catch (ModelNotFoundException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Post not found'
+                'message' => 'Post not found',
             ], 404);
         }
 
@@ -113,14 +111,14 @@ class ForumController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'You are not authorized to delete this post'
+                'message' => 'You are not authorized to delete this post',
             ], 403);
         }
         $forum->delete();
 
         return response()->json([
             'success' => true,
-            'message' => 'Successfully deleted'
+            'message' => 'Successfully deleted',
         ], 201);
     }
 
@@ -130,7 +128,7 @@ class ForumController extends Controller
             'title' => 'required|string|min:5|max:255',
             'body' => 'required|min:10|max:255',
             'category' => 'required|sometimes',
-            'slug' => 'unique:forums'
+            'slug' => 'unique:forums',
         ]);
 
         if ($validator->fails()) {
