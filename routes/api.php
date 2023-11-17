@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 /**
- * route "/register"
+ * route "/register".
  *
  * @method "POST"
  */
