@@ -45,3 +45,25 @@ test('User can login', function () {
             'expires_in',
         ]);
 });
+
+test('User can refresh token', function () {
+    $user = User::factory()->create();
+
+    // Login to obtain the initial token
+    $loginResponse = $this->postJson('/api/auth/login', [
+        'email' => $user->email,
+        'password' => 'password',
+    ])->assertOk();
+
+    $token = $loginResponse->json('access_token');
+
+    // Refresh the token
+    $this->postJson('/api/auth/refresh', [], [
+        'Authorization' => 'Bearer ' . $token,
+    ])->assertOk()
+        ->assertJsonStructure([
+            'access_token',
+            'token_type',
+            'expires_in',
+        ]);
+});
