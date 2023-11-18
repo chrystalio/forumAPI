@@ -67,3 +67,30 @@ test('User can refresh token', function () {
             'expires_in',
         ]);
 });
+
+test('User can log out', function () {
+    $user = User::factory()->create();
+
+    // Login to obtain the initial token
+    $loginResponse = $this->postJson('/api/auth/login', [
+        'email' => $user->email,
+        'password' => 'password',
+    ])->assertOk();
+
+    $token = $loginResponse->json('access_token');
+
+    // Logout
+    $this->postJson('/api/auth/logout', [], [
+        'Authorization' => 'Bearer ' . $token,
+    ])->assertOk();
+
+    // Attempt to refresh the token and assert unauthorized
+    $this->postJson('/api/auth/refresh', [], [
+        'Authorization' => 'Bearer ' . $token,
+    ])->assertUnauthorized();
+
+    // Attempt to logout again and assert unauthorized
+    $this->postJson('/api/auth/logout', [], [
+        'Authorization' => 'Bearer ' . $token,
+    ])->assertUnauthorized();
+});
