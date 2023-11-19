@@ -61,3 +61,37 @@ test('can get a paginated list of forums', function () {
         'user_id' => $forum->user_id,
     ]);
 });
+
+
+test('can get a specific post forum', function () {
+    $forum = Forum::factory()->create();
+
+    $this->get("/api/forums/{$forum->id}")
+        ->assertStatus(200)
+        ->assertJsonStructure([
+            'data' => [
+                'id',
+                'title',
+                'body',
+                'slug',
+                'category',
+                'created_at',
+                'updated_at',
+                'user' => [
+                    'id',
+                    'username',
+                ],
+                'comments',
+            ],
+        ]);
+
+    $this->assertDatabaseHas('forums', $forum->only([
+            'title',
+            'slug',
+            'body',
+            'category',
+            'user_id'
+        ]
+    ));
+});
+
