@@ -46,7 +46,7 @@ test('User can login', function () {
         ]);
 });
 
-test('User can check profile', function () {
+test('Authenticated user can check profile', function () {
     $user = User::factory()->create();
 
     // Login to obtain the initial token
@@ -70,7 +70,7 @@ test('User can check profile', function () {
         ]);
 });
 
-test('User can refresh token', function () {
+test('Authenticated user can refresh token', function () {
     $user = User::factory()->create();
 
     // Login to obtain the initial token
@@ -92,7 +92,7 @@ test('User can refresh token', function () {
         ]);
 });
 
-test('User can log out', function () {
+test('Authenticated user can log out', function () {
     $user = User::factory()->create();
 
     // Login to obtain the initial token
