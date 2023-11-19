@@ -1,6 +1,5 @@
 <?php
 
-
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
@@ -10,9 +9,9 @@ test('User can register', function () {
     $user = User::factory()->make();
 
     $response = $this->postJson('/api/register', $user->toArray() + [
-            'password' => 'password',
-            'password_confirmation' => 'password'
-        ]);
+        'password' => 'password',
+        'password_confirmation' => 'password',
+    ]);
 
     $response->assertCreated()
         ->assertJsonStructure([
@@ -22,13 +21,13 @@ test('User can register', function () {
                 'email',
                 'updated_at',
                 'created_at',
-                'id'
-            ]
+                'id',
+            ],
         ]);
 
     $this->assertDatabaseHas('users', [
         'username' => $user->username,
-        'email' => $user->email
+        'email' => $user->email,
     ]);
 });
 
@@ -58,7 +57,7 @@ test('Authenticated user can check profile', function () {
     $token = $loginResponse->json('access_token');
 
     $this->postJson('/api/auth/me', [], [
-        'Authorization' => 'Bearer ' . $token,
+        'Authorization' => 'Bearer '.$token,
     ])->assertOk()
         ->assertJsonStructure([
             'id',
@@ -83,7 +82,7 @@ test('Authenticated user can refresh token', function () {
 
     // Refresh the token
     $this->postJson('/api/auth/refresh', [], [
-        'Authorization' => 'Bearer ' . $token,
+        'Authorization' => 'Bearer '.$token,
     ])->assertOk()
         ->assertJsonStructure([
             'access_token',
@@ -105,16 +104,16 @@ test('Authenticated user can log out', function () {
 
     // Logout
     $this->postJson('/api/auth/logout', [], [
-        'Authorization' => 'Bearer ' . $token,
+        'Authorization' => 'Bearer '.$token,
     ])->assertOk();
 
     // Attempt to refresh the token and assert unauthorized
     $this->postJson('/api/auth/refresh', [], [
-        'Authorization' => 'Bearer ' . $token,
+        'Authorization' => 'Bearer '.$token,
     ])->assertUnauthorized();
 
     // Attempt to logout again and assert unauthorized
     $this->postJson('/api/auth/logout', [], [
-        'Authorization' => 'Bearer ' . $token,
+        'Authorization' => 'Bearer '.$token,
     ])->assertUnauthorized();
 });
