@@ -46,6 +46,30 @@ test('User can login', function () {
         ]);
 });
 
+test('User can check profile', function () {
+    $user = User::factory()->create();
+
+    // Login to obtain the initial token
+    $loginResponse = $this->postJson('/api/auth/login', [
+        'email' => $user->email,
+        'password' => 'password',
+    ])->assertOk();
+
+    $token = $loginResponse->json('access_token');
+
+    $this->postJson('/api/auth/me', [], [
+        'Authorization' => 'Bearer ' . $token,
+    ])->assertOk()
+        ->assertJsonStructure([
+            'id',
+            'username',
+            'email',
+            'email_verified_at',
+            'created_at',
+            'updated_at',
+        ]);
+});
+
 test('User can refresh token', function () {
     $user = User::factory()->create();
 
