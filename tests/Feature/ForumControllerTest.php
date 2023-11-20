@@ -4,7 +4,6 @@ use App\Models\Forum;
 use App\Models\User;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 use Symfony\Component\HttpFoundation\Response;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(DatabaseTransactions::class);
 
