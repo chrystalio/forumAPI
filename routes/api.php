@@ -1,9 +1,9 @@
 <?php
 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\ForumCommentController;
-use App\Http\Controllers\ForumController;
-use App\Http\Controllers\RegisterController;
+use App\Http\Controllers\v1\AuthController;
+use App\Http\Controllers\v1\ForumCommentController;
+use App\Http\Controllers\v1\ForumController;
+use App\Http\Controllers\v1\RegisterController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -17,11 +17,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-/**
- * route "/register".
- *
- * @method "POST"
- */
+
+Route::group(['prefix' => 'v1'], function () {
+
 Route::post('/register', RegisterController::class)->name('register');
 
 Route::group(['middleware' => 'api'], function ($router) {
@@ -36,5 +34,5 @@ Route::group(['middleware' => 'api'], function ($router) {
 
     Route::apiResource('forums', ForumController::class);
     Route::apiResource('forums.comments', ForumCommentController::class);
-
+});
 });
