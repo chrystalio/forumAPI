@@ -2,6 +2,7 @@
 
 use App\Models\Forum;
 use App\Models\User;
+use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
 
 uses(DatabaseTransactions::class);
@@ -15,7 +16,7 @@ test('can get a paginated list of forums', function () {
     $forum = Forum::factory()->create();
 
     $this->get('/api/forums')
-        ->assertStatus(200)
+        ->assertStatus(Response::HTTP_OK)
         ->assertJsonStructure([
             'current_page',
             'data' => [
@@ -67,7 +68,7 @@ test('can get a specific post forum', function () {
     $forum = Forum::factory()->create();
 
     $this->get("/api/forums/{$forum->id}")
-        ->assertStatus(200)
+        ->assertStatus(Response::HTTP_OK)
         ->assertJsonStructure([
             'data' => [
                 'id',
@@ -85,13 +86,13 @@ test('can get a specific post forum', function () {
             ],
         ]);
 
-    $this->assertDatabaseHas('forums', $forum->only([
-            'title',
-            'slug',
-            'body',
-            'category',
-            'user_id'
-        ]
-    ));
+    $this->assertDatabaseHas('forums', [
+        'title' => $forum->title,
+        'slug' => $forum->slug,
+        'body' => $forum->body,
+        'category' => $forum->category,
+        'user_id' => $forum->user_id,
+    ]);
 });
+
 
