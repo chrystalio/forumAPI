@@ -2,8 +2,9 @@
 
 use App\Models\Forum;
 use App\Models\User;
-use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
+use Symfony\Component\HttpFoundation\Response;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 uses(DatabaseTransactions::class);
 
@@ -63,7 +64,6 @@ test('can get a paginated list of forums', function () {
     ]);
 });
 
-
 test('can get a specific post forum', function () {
     $forum = Forum::factory()->create();
 
@@ -94,5 +94,10 @@ test('can get a specific post forum', function () {
         'user_id' => $forum->user_id,
     ]);
 });
+
+todo('Can create Post Forum');
+todo('Can update Post Forum');
+todo('Can delete Post Forum');
+todo('Can filter Post Forum by category');
 
 
